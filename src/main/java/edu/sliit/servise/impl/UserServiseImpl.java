@@ -1,5 +1,6 @@
 package edu.sliit.servise.impl;
 
+import edu.sliit.document.User;
 import edu.sliit.dto.GetUserDto;
 import edu.sliit.dto.UserDto;
 import edu.sliit.repository.UserRepository;
@@ -21,6 +22,7 @@ public class UserServiseImpl implements UserServise {
 
     @Override
     public ResponseEntity<String> addUser(UserDto dto) {
+        User mapEntity = modelMapper.map(dto,User.class);
         return null;
     }
 
