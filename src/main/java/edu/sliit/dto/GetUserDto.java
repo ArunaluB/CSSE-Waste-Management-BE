@@ -12,7 +12,7 @@ public class GetUserDto {
     private String UserId;
     private String userName;
     private String location;
-    private String status;
+    private String Status;
     private Number points ;
 
 }

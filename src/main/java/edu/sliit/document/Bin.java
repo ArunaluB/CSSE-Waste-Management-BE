@@ -19,7 +19,7 @@ public class Bin {
     @Id
     private String id;
     @Indexed(unique = true)
-    private String BinId;
+    private Number BinId;
     private String UserId ;
     private String BinType;
     private String Capacity;

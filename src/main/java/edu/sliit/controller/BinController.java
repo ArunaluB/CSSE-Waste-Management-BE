@@ -19,17 +19,16 @@ public class BinController {
 
     private final BinServise binServise;
 
-
     @PostMapping("addbin")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> addBin (@RequestBody BinDto dto ) {
         log.info("User Registration for [{}]", dto);
-        return binServise.addCollecter(dto);
+        return binServise.addBin(dto);
     }
 
     @GetMapping("getbindetails")
     public List<GetBinDto> getAllDetails (String userid){
-        return binServise.getAllCollection(userid);
+        return binServise.getAllBin(userid);
     }
 
 }
