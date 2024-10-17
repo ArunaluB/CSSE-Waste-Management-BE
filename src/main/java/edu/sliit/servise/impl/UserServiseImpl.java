@@ -2,14 +2,22 @@ package edu.sliit.servise.impl;
 
 import edu.sliit.dto.GetUserDto;
 import edu.sliit.dto.UserDto;
+import edu.sliit.repository.UserRepository;
 import edu.sliit.servise.UserServise;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiseImpl implements UserServise {
+
+
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public ResponseEntity<String> addUser(UserDto dto) {
