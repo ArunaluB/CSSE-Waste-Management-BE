@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CollecterDto {
+public class CollectorDto {
 
     private String userid ;
     private String binId;

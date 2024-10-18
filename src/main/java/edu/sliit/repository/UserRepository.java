@@ -6,8 +6,28 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for performing CRUD operations on User documents in MongoDB.
+ * Extends MongoRepository, providing built-in methods for common database operations.
+ */
 @Repository
-public interface  UserRepository extends MongoRepository<User,String> {
+public interface UserRepository extends MongoRepository<User, String> {
+
+    /**
+     * Custom method to find users by their username and password.
+     * Typically used for authentication purposes.
+     *
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @return List of User objects matching the provided username and password.
+     */
     List<User> findByUsernameAndPassword(String username, String password);
-    List<User> findByUsername( String userId);
+
+    /**
+     * Custom method to find users by their username.
+     *
+     * @param username The username of the user.
+     * @return List of User objects matching the provided username.
+     */
+    List<User> findByUsername(String username);
 }
