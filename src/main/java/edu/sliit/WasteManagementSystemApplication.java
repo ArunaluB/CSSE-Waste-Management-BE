@@ -3,6 +3,7 @@ package edu.sliit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 /**
  * Main class to bootstrap and launch the Waste Management System Spring Boot application.
  */
@@ -18,4 +19,6 @@ public class WasteManagementSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(WasteManagementSystemApplication.class, args);
     }
+
+
 }

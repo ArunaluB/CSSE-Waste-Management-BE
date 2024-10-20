@@ -22,7 +22,6 @@ import java.util.Map;
 @Slf4j
 @RequestMapping(Constants.BIN_BASE_URL)
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BinController {
 
     private final BinService binService;
