@@ -2,6 +2,8 @@ package edu.sliit.service.impl;
 
 import edu.sliit.config.ModelMapperSingleton;
 import edu.sliit.document.Collector;
+import edu.sliit.exception.InternalServerErrorException;
+import edu.sliit.exception.InvalidDataException;
 import edu.sliit.repository.CollectorRepository;
 import edu.sliit.util.Constants;
 import edu.sliit.document.User;
@@ -23,7 +25,6 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Map;
-import java.util.List;
 
 /**
  * Implementation of the UserService interface.
@@ -88,13 +89,10 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.ok(Constants.USER_ADDED_SUCCESS + generatedUserId);
         } catch (IllegalArgumentException ex) {
             log.error(Constants.INVALID_DATA_PROVIDED, ex);
-            return ResponseEntity.badRequest().body(Constants.INVALID_DATA_PROVIDED + ex.getMessage());
-        } catch (EntityNotFoundException ex) {
-            log.error(Constants.ENTITY_NOT_FOUND, ex);
-            return ResponseEntity.status(Constants.HTTP_NOT_FOUND).body(Constants.ENTITY_NOT_FOUND + ex.getMessage());
+            throw new InvalidDataException(Constants.INVALID_DATA_PROVIDED + ex.getMessage(), ex.getMessage());
         } catch (Exception ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR, ex);
-            return ResponseEntity.status(Constants.HTTP_INTERNAL_SERVER_ERROR).body(Constants.INTERNAL_SERVER_ERROR + ex.getMessage());
+            throw new InternalServerErrorException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -125,9 +123,9 @@ public class UserServiceImpl implements UserService {
         } catch (EntityNotFoundException ex) {
             log.error(Constants.ENTITY_NOT_FOUND, ex);
             throw ex;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR, ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
@@ -159,9 +157,9 @@ public class UserServiceImpl implements UserService {
         } catch (EntityNotFoundException ex) {
             log.error(Constants.ENTITY_NOT_FOUND, ex);
             throw ex;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR, ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
@@ -250,7 +248,7 @@ public class UserServiceImpl implements UserService {
     public String getUserStatus(String userId) {
         try {
             // Fetch the user by their ID
-            Optional<User> optionalUser = userRepository.findById(userId);
+            Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUserId(userId));
 
             // If the user is found, return the status
             if (optionalUser.isPresent()) {
@@ -314,9 +312,9 @@ public class UserServiceImpl implements UserService {
                     }, Collectors.counting()));
 
             return collectionsByYear;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 }

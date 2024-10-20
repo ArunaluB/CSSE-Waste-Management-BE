@@ -5,6 +5,7 @@ import edu.sliit.document.Payment;
 import edu.sliit.document.User;
 import edu.sliit.dto.GetPaymentDto;
 import edu.sliit.dto.PaymentDto;
+import edu.sliit.exception.InvalidDataException;
 import edu.sliit.repository.PaymentRepository;
 import edu.sliit.repository.UserRepository;
 import edu.sliit.service.PaymentService;
@@ -177,9 +178,9 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (EntityNotFoundException ex) {
             log.error(Constants.PAYMENT_NOT_FOUND + userid, ex);
             throw ex;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 

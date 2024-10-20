@@ -6,6 +6,7 @@ import edu.sliit.document.Collector;
 import edu.sliit.document.User;
 import edu.sliit.dto.BinDto;
 import edu.sliit.dto.GetBinDto;
+import edu.sliit.exception.InvalidDataException;
 import edu.sliit.repository.BinRepository;
 import edu.sliit.repository.CollectorRepository;
 import edu.sliit.repository.UserRepository;
@@ -52,7 +53,7 @@ public class BinServiceImpl implements BinService {
     private final BinRepository binRepository;
     private final UserRepository userRepository;
     private final CollectorRepository collectorRepository;
-    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();  // Use the Singleton
+    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();
 
 
     /**
@@ -125,9 +126,9 @@ public class BinServiceImpl implements BinService {
         } catch (EntityNotFoundException ex) {
             log.error(Constants.BIN_NOT_FOUND + userid, ex);
             throw ex;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
@@ -151,9 +152,9 @@ public class BinServiceImpl implements BinService {
                     }, Collectors.counting()));
 
             return collectionsByMonth;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
     @Override
@@ -186,9 +187,9 @@ public class BinServiceImpl implements BinService {
             result.put("Total", totalCollections);
 
             return result;
-        } catch (Exception ex) {
+        } catch (InvalidDataException ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
+            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
