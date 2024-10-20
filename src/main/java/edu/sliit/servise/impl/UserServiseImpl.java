@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,37 +24,69 @@ public class UserServiseImpl implements UserServise {
 
     @Override
     public ResponseEntity<String> addUser(UserDto dto) {
+        long userCount = userRepository.count();
+        String userId = "US" + (userCount + 1);
         User mapEntity = modelMapper.map(dto,User.class);
-        return null;
+        mapEntity.setUserId(userId);
+        userRepository.save(mapEntity);
+        return ResponseEntity.ok("User added successfully with ID: " + userId);
     }
 
     @Override
     public List<GetUserDto> getUsers(String username, String password) {
-        return null;
+        List<User> users =  userRepository.findByUsernameAndPassword(username, password);
+
+        return users.stream()
+                .map(user -> modelMapper.map(user, GetUserDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<GetUserDto> getUser(String username) {
-        return null;
+        List<User> users =  userRepository.findByUsername(username);
+        return  users.stream()
+                .map(user -> modelMapper.map(user, GetUserDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public ResponseEntity<String> UpdateStauts(String userid, String status) {
-        return null;
+        Optional<User> userOptional = userRepository.findById(userid);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(status);
+            userRepository.save(user);
+            return ResponseEntity.ok("Status updated successfully for User ID: " + userid);
+        } else {
+            return ResponseEntity.status(404).body("User not found with ID: " + userid);
+        }
+
     }
 
     @Override
     public ResponseEntity<String> UpdatePoints(String userid, Number points) {
-        return null;
+        Optional<User> userOptional = userRepository.findById(userid);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPoints(points);
+            userRepository.save(user);
+            return ResponseEntity.ok("Points updated successfully for User ID: " + userid);
+        } else {
+            return ResponseEntity.status(404).body("User not found with ID: " + userid);
+        }
     }
 
     @Override
     public String getStauts(String userid) {
-        return null;
+        Optional<User> userOptional = userRepository.findById(userid);
+        return userOptional.map(User::getStatus).orElse("User not found with ID: " + userid);
+
     }
 
     @Override
     public Number getPoints(String userid) {
-        return null;
+        Optional<User> userOptional = userRepository.findById(userid);
+        return userOptional.map(User::getPoints).orElse(null);
+
     }
 }

@@ -7,6 +7,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface BinServise {
-    ResponseEntity<String> addCollecter(BinDto dto);
-    List<GetBinDto> getAllCollection (String userid);
+    ResponseEntity<String> addBin(BinDto dto);
+    List<GetBinDto> getAllBin (String userid);
 }

@@ -32,9 +32,9 @@ public class UserController {
          return userServise.getUsers(username,password);
     }
 
-    @GetMapping("getUsers")
-    public List<GetUserDto> getUsers(@NotNull @RequestParam String username){
-          return  userServise.getUser(username);
+    @GetMapping("getUsersid")
+    public List<GetUserDto> getUsers(@NotNull @RequestParam String userid){
+          return  userServise.getUser(userid);
     }
 
     @GetMapping("getstatus")
