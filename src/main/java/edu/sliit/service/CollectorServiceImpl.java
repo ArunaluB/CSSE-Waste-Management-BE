@@ -1,4 +1,4 @@
-package edu.sliit.service.impl;
+package edu.sliit.service;
 
 import edu.sliit.config.ModelMapperSingleton;
 import edu.sliit.document.Collector;

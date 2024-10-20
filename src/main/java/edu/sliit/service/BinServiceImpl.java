@@ -1,4 +1,4 @@
-package edu.sliit.service.impl;
+package edu.sliit.service;
 
 import edu.sliit.config.ModelMapperSingleton;
 import edu.sliit.document.Bin;
@@ -6,7 +6,6 @@ import edu.sliit.document.Collector;
 import edu.sliit.document.User;
 import edu.sliit.dto.BinDto;
 import edu.sliit.dto.GetBinDto;
-import edu.sliit.exception.InvalidDataException;
 import edu.sliit.repository.BinRepository;
 import edu.sliit.repository.CollectorRepository;
 import edu.sliit.repository.UserRepository;
@@ -53,7 +52,7 @@ public class BinServiceImpl implements BinService {
     private final BinRepository binRepository;
     private final UserRepository userRepository;
     private final CollectorRepository collectorRepository;
-    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();
+    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();  // Use the Singleton
 
 
     /**
@@ -126,9 +125,9 @@ public class BinServiceImpl implements BinService {
         } catch (EntityNotFoundException ex) {
             log.error(Constants.BIN_NOT_FOUND + userid, ex);
             throw ex;
-        } catch (InvalidDataException ex) {
+        } catch (Exception ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
+            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -152,9 +151,9 @@ public class BinServiceImpl implements BinService {
                     }, Collectors.counting()));
 
             return collectionsByMonth;
-        } catch (InvalidDataException ex) {
+        } catch (Exception ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
+            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
     @Override
@@ -187,9 +186,9 @@ public class BinServiceImpl implements BinService {
             result.put("Total", totalCollections);
 
             return result;
-        } catch (InvalidDataException ex) {
+        } catch (Exception ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-            throw new InvalidDataException(Constants.INTERNAL_SERVER_ERROR, ex.getMessage());
+            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
