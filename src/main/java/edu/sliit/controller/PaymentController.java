@@ -21,6 +21,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping(Constants.PAYMENT_BASE_URL)
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PaymentController {
 
     private final PaymentService paymentService;

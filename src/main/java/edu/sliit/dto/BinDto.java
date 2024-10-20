@@ -10,9 +10,8 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 public class BinDto {
 
-    @NotNull
-    private String UserId ;
-    private String BinType;
-    private String Capacity;
-    private String Location ;
+    private String userId ;
+    private String binType;
+    private String capacity;
+
 }

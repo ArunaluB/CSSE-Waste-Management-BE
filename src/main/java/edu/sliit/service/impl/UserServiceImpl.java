@@ -1,6 +1,8 @@
 package edu.sliit.service.impl;
 
 import edu.sliit.config.ModelMapperSingleton;
+import edu.sliit.document.Collector;
+import edu.sliit.repository.CollectorRepository;
 import edu.sliit.util.Constants;
 import edu.sliit.document.User;
 import edu.sliit.dto.UserRequestDto;
@@ -10,6 +12,7 @@ import edu.sliit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,10 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Map;
+import java.util.List;
 
 /**
  * Implementation of the UserService interface.
@@ -40,7 +47,10 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();  // Use the Singleton
+    private final CollectorRepository collectorRepository;
+    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();
+    // Use the Singleton
+
 
 
     /**
@@ -56,6 +66,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> createUser(UserRequestDto userRequestDto) {
         try {
+            List<User> existingUser =userRepository.findByUsername(userRequestDto.getUsername());
+            List<User> existingEmails =userRepository.findByEmail(userRequestDto.getEmail());
+            if (!existingUser.isEmpty() && !existingEmails.isEmpty()) {
+                log.error(Constants.USERS_ALREADY + userRequestDto.getUsername());
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.USERS_ALREADY + userRequestDto.getUsername());
+            }
+
             // Generate a unique user ID
             long userCount = userRepository.count();
             String generatedUserId = Constants.USER_ID_PREFIX + (userCount + 1);
@@ -92,18 +109,16 @@ public class UserServiceImpl implements UserService {
      * @throws Exception If an unexpected error occurs during retrieval.
      */
     @Override
+
     public List<UserResponseDto> getUsersByCredentials(String username, String password) {
         try {
-            // Fetch users by matching username and password
             List<User> userList = userRepository.findByUsernameAndPassword(username, password);
-
-            // Check if no users were found
             if (userList.isEmpty()) {
                 log.warn(Constants.NO_USERS_FOUND_CREDENTIALS);
                 throw new EntityNotFoundException(Constants.NO_USERS_FOUND_CREDENTIALS);
             }
 
-            // Convert the list of users to UserResponseDto
+            // Convert the list of users to UserResponseDto using the configured modelMapper
             return userList.stream()
                     .map(user -> modelMapper.map(user, UserResponseDto.class))
                     .collect(Collectors.toList());
@@ -115,6 +130,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
+
 
     /**
      * Retrieves a list of users by matching the username.
@@ -276,6 +292,31 @@ public class UserServiceImpl implements UserService {
         } catch (Exception ex) {
             log.error(Constants.INTERNAL_SERVER_ERROR, ex);
             return null;
+        }
+    }
+
+
+
+
+    public Map<Integer, Long> getCollectionCountByYear(String userid) {
+        List<Collector> collectorList = collectorRepository.findAllByUserId(userid);
+
+        try {
+            // Group by year and count the collections in each year
+            Map<Integer, Long> collectionsByYear = collectorList.stream()
+                    .collect(Collectors.groupingBy(collector -> {
+                        // Convert the collection date to LocalDate
+                        LocalDate collectionDate = collector.getCollectionDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        // Extract the year from the collection date
+                        return collectionDate.getYear();
+                    }, Collectors.counting()));
+
+            return collectionsByYear;
+        } catch (Exception ex) {
+            log.error(Constants.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
+            throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
 }

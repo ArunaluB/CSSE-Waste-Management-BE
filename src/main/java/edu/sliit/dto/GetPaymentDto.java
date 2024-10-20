@@ -9,7 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPaymentDto {
-    private Number PaymentId;
+    private String PaymentId;
     private String UserId;
     private Number PaymentAmount;
     private Date PaymentDate;

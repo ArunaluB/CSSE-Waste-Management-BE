@@ -30,7 +30,7 @@ public class Payment {
      * Indexed to ensure each payment has a unique ID.
      */
     @Indexed(unique = true)
-    private Long paymentId;  // Changed 'PaymentId' to 'paymentId' to follow Java naming conventions (camelCase).
+    private String paymentId;  // Changed 'PaymentId' to 'paymentId' to follow Java naming conventions (camelCase).
 
     /**
      * The ID of the user who made the payment.

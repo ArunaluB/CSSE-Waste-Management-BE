@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Document(collection = "User_Details")  // Fixed typo: 'collation' → 'collection'
 public class User {
 

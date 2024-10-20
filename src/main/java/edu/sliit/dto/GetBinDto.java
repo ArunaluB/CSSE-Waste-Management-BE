@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetBinDto {
-    private String id;
+    private String binid;
     private String UserId ;
     private String BinType;
     private String Capacity;

@@ -17,8 +17,9 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@RequestMapping("/collector")
+@RequestMapping("collector")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CollectorController {
 
     private final CollectorService collectorService;
@@ -45,4 +46,5 @@ public class CollectorController {
     public List<GetPaymentDto> getAllCollectionByUserId (String userid){
         return collectorService.getAllCollectionByUserId(userid);
     }
+
 }

@@ -23,10 +23,13 @@ public class Constants {
     public static final String NO_USERS_FOUND_CREDENTIALS = "No users found with the provided credentials";
     public static final String NO_USERS_FOUND_USERNAME = "No users found with username: ";
 
-
+    public static final String USERS_ALREADY = "already exists Emails Or Password: ";
 
     // Payment-related constants
-    public static final String PAYMENT_BASE_URL = "/Payment";
+    public static final String BIN_ID_PREFIX = "BIN";
+    public static final String PAY_ID_PREFIX = "PAY";
+
+    public static final String PAYMENT_BASE_URL = "Payment";
     public static final String PAYMENT_ADD_URL = "addpayment";
     public static final String PAYMENT_GET_DETAILS_URL = "getdetails";
     public static final String PAYMENT_NEXT_DUE_URL = "nextPayment";
@@ -36,11 +39,13 @@ public class Constants {
     public static final String NO_PAYMENT_FOUND_CREDENTIALS = "No Payment found with the provided credentials";
 
     // Bin-related constants
-    public static final String BIN_BASE_URL = "/Bin";
+    public static final String STATUS_BIN = "ISEMPTY";
+    public static final String BIN_BASE_URL = "Bin";
     public static final String BIN_ADD_URL = "addbin";
     public static final String BIN_GET_DETAILS_URL = "getbindetails";
     public static final String BIN_ADDED_SUCCESS = "Bin added successfully with ID: ";
     public static final String BIN_NOT_FOUND = "Bin not found with ID: ";
+    public static final String BIN_STATUS_UPDATED_SUCCESS = "Bin status updated successfully for ID: ";
 
     // Collection-related constants
     public static final String COLLECTION_ADDED_SUCCESS = "Collection added successfully with ID: ";

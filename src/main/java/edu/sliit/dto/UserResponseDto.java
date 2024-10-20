@@ -10,7 +10,7 @@ import lombok.*;
 public class UserResponseDto {
 
     private String UserId;
-    private String userName;
+    private String username;
     private String location;
     private String Status;
     private Number points ;

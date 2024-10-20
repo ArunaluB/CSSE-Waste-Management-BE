@@ -20,4 +20,6 @@ public interface CollectorRepository extends MongoRepository<Collector, String> 
      * @return List of Collector objects associated with the given userId.
      */
     List<Collector> findAllByUserId(String userId);
+    List<Collector> findAllByBinId(String binId);
+
 }

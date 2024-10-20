@@ -2,6 +2,7 @@ package edu.sliit.service.impl;
 
 import edu.sliit.config.ModelMapperSingleton;
 import edu.sliit.document.Payment;
+import edu.sliit.document.User;
 import edu.sliit.dto.GetPaymentDto;
 import edu.sliit.dto.PaymentDto;
 import edu.sliit.repository.PaymentRepository;
@@ -10,6 +11,7 @@ import edu.sliit.service.PaymentService;
 import edu.sliit.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();  // Use the Singleton
+    private final ModelMapper modelMapper = ModelMapperSingleton.getInstance();
 
 
     /**
@@ -61,14 +63,24 @@ public class PaymentServiceImpl implements PaymentService {
     public ResponseEntity<String> createPayment(PaymentDto paymentDto) {
         try {
             log.info(Constants.LOG_CREATING_PAYMENT + paymentDto.getUserId());
+            log.info(Constants.LOG_CREATING_PAYMENT + paymentDto.getPaymentDate());
+            // Check if userId is null before proceeding
+            if (paymentDto.getUserId() == null) {
+                log.error(Constants.INVALID_DATA_PROVIDED + " UserId is null.");
+                return ResponseEntity.badRequest().body(Constants.INVALID_DATA_PROVIDED + " UserId must not be null.");
+            }
 
-            userRepository.findById(paymentDto.getUserId()).ifPresentOrElse(user -> {
-                user.setStatus(Constants.PAYMENT_STATUS);
-                userRepository.save(user);
-                log.info(Constants.STATUS_UPDATED_SUCCESS + paymentDto.getUserId());
-            }, () -> {
-                throw new EntityNotFoundException(Constants.USER_NOT_FOUND + paymentDto.getUserId());
-            });
+            // Find user and update status
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findByUserId(paymentDto.getUserId()));
+            if (userOptional.isEmpty()) {
+                log.error(Constants.USER_NOT_FOUND + paymentDto.getUserId());
+                return ResponseEntity.status(Constants.HTTP_NOT_FOUND).body(Constants.USER_NOT_FOUND + paymentDto.getUserId());
+            }
+
+            User user = userOptional.get();
+            user.setStatus(Constants.PAYMENT_STATUS);
+            userRepository.save(user);
+            log.info(Constants.STATUS_UPDATED_SUCCESS + paymentDto.getUserId());
 
             Date paymentDate = paymentDto.getPaymentDate();
             Calendar calendar = Calendar.getInstance();
@@ -77,9 +89,12 @@ public class PaymentServiceImpl implements PaymentService {
             Date nextPaymentDate = calendar.getTime();
 
             long paymentCount = paymentRepository.count();
+            String generatedPaymentId = Constants.PAY_ID_PREFIX + (paymentCount + 1);
             Payment paymentEntity = modelMapper.map(paymentDto, Payment.class);
-            paymentEntity.setPaymentId(paymentCount + 1); // Incrementing ID
+
+            paymentEntity.setPaymentId(generatedPaymentId); // Incrementing ID
             paymentEntity.setNextPaymentDate(nextPaymentDate);
+            paymentEntity.setId(new ObjectId().toString());
 
             paymentRepository.save(paymentEntity);
             log.info(Constants.PAYMENT_ADDED_SUCCESS + paymentEntity.getPaymentId());
@@ -96,6 +111,7 @@ public class PaymentServiceImpl implements PaymentService {
             return ResponseEntity.status(Constants.HTTP_INTERNAL_SERVER_ERROR).body(Constants.INTERNAL_SERVER_ERROR + ex.getMessage());
         }
     }
+
 
     /**
      * Retrieves a list of payments that match the provided userid .
@@ -134,10 +150,30 @@ public class PaymentServiceImpl implements PaymentService {
     public String getNextPaymentDueDate(String userid) {
         try {
             log.info(Constants.LOG_FETCHING_NEXT_PAYMENT_DUE + userid);
-            Optional<Payment> paymentOptional = paymentRepository.findById(userid);
-            return paymentOptional.map(Payment::getNextPaymentDate)
-                    .map(Object::toString)
+            // Fetch all payment records for the user
+            List<Payment> payments = paymentRepository.findByUserId(userid);
+
+            // Check if any payments exist for the user
+            if (payments.isEmpty()) {
+                log.error(Constants.PAYMENT_NOT_FOUND + userid);
+                throw new EntityNotFoundException(Constants.PAYMENT_NOT_FOUND + userid);
+            }
+
+            // Get the current date
+            Date currentDate = new Date();
+
+            // Find the payment with the closest next payment date to the current date
+            Payment closestPayment = payments.stream()
+                    .min((p1, p2) -> {
+                        long diff1 = Math.abs(p1.getNextPaymentDate().getTime() - currentDate.getTime());
+                        long diff2 = Math.abs(p2.getNextPaymentDate().getTime() - currentDate.getTime());
+                        return Long.compare(diff1, diff2);
+                    })
                     .orElseThrow(() -> new EntityNotFoundException(Constants.PAYMENT_NOT_FOUND + userid));
+
+            // Return the closest payment's next payment date
+            return closestPayment.getNextPaymentDate().toString();
+
         } catch (EntityNotFoundException ex) {
             log.error(Constants.PAYMENT_NOT_FOUND + userid, ex);
             throw ex;
@@ -146,4 +182,5 @@ public class PaymentServiceImpl implements PaymentService {
             throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
+
 }

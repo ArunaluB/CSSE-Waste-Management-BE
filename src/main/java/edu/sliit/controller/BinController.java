@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST controller to handle Bin-related operations.
@@ -21,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping(Constants.BIN_BASE_URL)
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BinController {
 
     private final BinService binService;
@@ -48,5 +50,45 @@ public class BinController {
     public List<GetBinDto> getAllDetails(@RequestParam String userid) {
         log.info(Constants.LOG_FETCHING_BIN_DETAILS, userid);
         return binService.getAllBinByUserId(userid);
+    }
+
+
+    /**
+     * Endpoint to update the status of a bin collection based on the provided binId and new status.
+     *
+     * @param binId     The ID of the bin collection.
+     * @param newStatus The new status to be set for the bin collection.
+     * @return ResponseEntity<String> indicating success or failure of the update.
+     */
+    @PutMapping("/{binId}/status")
+    public ResponseEntity<String> updateBinCollectionStatus(@PathVariable String binId, @RequestParam String newStatus) {
+        log.info("Updating bin status for binId: {}, newStatus: {}", binId, newStatus);
+        return binService.updateBinCollectionStatus(binId, newStatus);
+    }
+
+    /**
+     * Endpoint to get the collection count grouped by month for a specific bin.
+     *
+     * @param binId The ID of the bin.
+     * @return Map<String, Long> with the month as the key and the collection count as the value.
+     */
+    @GetMapping("/{binId}/collections/monthly")
+    public ResponseEntity<Map<String, Long>> getCollectionCountByMonth(@PathVariable String binId) {
+        log.info("Fetching collection count by month for binId: {}", binId);
+        Map<String, Long> collectionsByMonth = binService.getCollectionCountByMonth(binId);
+        return ResponseEntity.ok(collectionsByMonth);
+    }
+
+    /**
+     * Endpoint to get the collection count grouped by month and the total count for a specific bin.
+     *
+     * @param binId The ID of the bin.
+     * @return Map<String, Object> with the month as the key and the collection count as the value, along with the total count.
+     */
+    @GetMapping("/{binId}/collections/monthly-total")
+    public ResponseEntity<Object> getCollectionCountByMonthAndTotal(@PathVariable String binId) {
+        log.info("Fetching collection count by month and total for binId: {}", binId);
+        Map<String, Object> collectionsByMonthAndTotal = binService.getCollectionCountByMonthAndTotal(binId);
+        return ResponseEntity.ok(collectionsByMonthAndTotal);
     }
 }

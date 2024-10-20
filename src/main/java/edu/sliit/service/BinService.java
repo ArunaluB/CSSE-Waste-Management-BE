@@ -5,6 +5,7 @@ import edu.sliit.dto.GetBinDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service interface for managing bin-related operations.
@@ -27,4 +28,8 @@ public interface BinService {
      * @return List of GetBinDto objects containing bin details for the specified user.
      */
     List<GetBinDto> getAllBinByUserId(String userId);
+
+    public Map<String, Long> getCollectionCountByMonth(String binid);
+    public Map<String, Object> getCollectionCountByMonthAndTotal(String binid);
+    public ResponseEntity<String> updateBinCollectionStatus(String binId, String newStatus);
 }

@@ -20,4 +20,5 @@ public interface BinRepository extends MongoRepository<Bin, String> {
      * @return List of Bin objects associated with the given userId.
      */
     List<Bin> findAllByUserId(String userId);
+
 }

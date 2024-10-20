@@ -9,6 +9,7 @@ import edu.sliit.service.CollectorService;
 import edu.sliit.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,8 +56,10 @@ public class CollectorServiceImpl implements CollectorService {
     public ResponseEntity<String> createCollector(CollectorDto collectorDto) {
         try {
             long collectorCount = collectorRepository.count();
+            String generatedCollectorId = "COLL" + (collectorCount + 1);
             Collector collectedEntity = modelMapper.map(collectorDto, Collector.class);
-            collectedEntity.setCollectorId(collectorCount + Constants.COLLECTOR_ID_INCREMENT);
+            collectedEntity.setCollectorId(generatedCollectorId);
+            collectedEntity.setId(new ObjectId().toString());
             collectorRepository.save(collectedEntity);
             return ResponseEntity.ok(Constants.COLLECTION_ADDED_SUCCESS + collectedEntity.getCollectorId());
 
@@ -97,4 +100,9 @@ public class CollectorServiceImpl implements CollectorService {
             throw new RuntimeException(Constants.INTERNAL_SERVER_ERROR, ex);
         }
     }
+
+
+
+
+
 }

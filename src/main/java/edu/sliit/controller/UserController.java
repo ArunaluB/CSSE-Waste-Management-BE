@@ -21,6 +21,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping(Constants.USERS_BASE_URL)
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
     private final UserService userService;

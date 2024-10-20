@@ -1,13 +1,13 @@
 package edu.sliit.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@Builder
 public class UserRequestDto {
     @NotNull
     private String firstName;

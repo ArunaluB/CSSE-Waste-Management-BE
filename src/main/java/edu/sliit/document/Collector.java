@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "Collector_Details")  // Fixed typo: 'collation' → 'collection'
+@Document(collection = "Collector_Details")
 public class Collector {
 
     /**
@@ -31,7 +31,7 @@ public class Collector {
      * Indexed to ensure that each collector has a unique identifier.
      */
     @Indexed(unique = true)
-    private Number collectorId;  // Changed 'CollectorId' to 'collectorId' to follow camelCase naming.
+    private String collectorId;  // Changed 'CollectorId' to 'collectorId' to follow camelCase naming.
 
     /**
      * The ID of the user associated with this collection.

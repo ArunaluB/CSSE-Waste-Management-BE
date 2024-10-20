@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "Bin_Details")  // Fixed typo: 'collation' → 'collection'
+@Document(collection = "Bin_Details")
 public class Bin {
 
     /**
@@ -29,25 +29,29 @@ public class Bin {
      * Indexed to ensure that each bin has a unique identifier.
      */
     @Indexed(unique = true)
-    private Number binId;  // Changed 'BinId' to 'binId' to follow Java naming conventions (camelCase).
+    private String  BinId;
 
     /**
      * ID of the user who owns the bin.
      */
-    private String userId;  // Changed 'UserId' to 'userId' to follow camelCase.
+    private String userId;
 
     /**
      * The type of the bin (e.g., recycling, general waste).
      */
-    private String binType;  // Changed 'BinType' to 'binType' to follow camelCase.
+    private String binType;
 
     /**
      * The capacity of the bin.
      */
-    private String capacity;
+    private String  capacity;
 
     /**
      * The location where the bin is placed.
      */
-    private String location;  // Changed 'Location' to 'location' to follow camelCase.
+    private String location;
+
+    private String Status;
+
+
 }
